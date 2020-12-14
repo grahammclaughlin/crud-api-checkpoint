@@ -1,0 +1,29 @@
+#---
+version: "3.2" # Version of docker-compose to use
+services:
+  users-db: # Name of the service
+    image: mysql:8 # Image (local or public) to create the container from
+    ports:
+      - "3306:3306" # Exposed host port : container port
+    # command: --init-file /setup.sql
+    volumes:
+      # Copy the setup file from your the local directory
+      # into the init db dir for initialization
+      # - /setup.sql:/docker-entrypoint-initdb.d/setup.sql
+      - .\.docker/setup.sql:/setup.sql
+      # Mount a local directory to persist the database after
+      # removal of the container.  Note, actual volume is
+      # defined below
+      - .\users-data:/var/lib/mysql
+    environment: # Environment variables required by the image
+      # MYSQL_ROOT_PASSWORD: password
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+      MYSQL_DATABASE: mydb
+      # MYSQL_USER: root
+      # MYSQL_PASSWORD: password
+
+# Add more services here
+
+volumes: # Volumes that can be shared by all services (must exist on the service declaration.)  You can include the path to your development source code as well.  Check the Docker docs for more info.
+  users-data:
+    driver: local
